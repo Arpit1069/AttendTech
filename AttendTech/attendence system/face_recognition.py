@@ -9,7 +9,7 @@ path = 'images'
 images = []
 personname = []
 mylist = os.listdir(path)
-# print(mylist)
+print(mylist)
 for cu_img in mylist:
     current_Img = cv2.imread(f'{path}/{cu_img}')
     images.append(current_Img)
@@ -24,9 +24,25 @@ def faceencodings(images):
        encodelist.append(encode)
     return encodelist
 
+
+
 print(faceencodings(images))
 encodelistknown = faceencodings(images)
 print("All encodings complete!!!!")
+
+def attendance(name):
+    with open('attendance.csv','r+') as f:
+     myDataList = f.readlines()
+     nameList = []
+     for line in myDataList:
+         entry = line.split(',')
+         nameList.append(entry[0])
+
+     if name not in nameList:
+            time_now = datetime.now()
+            tstr = time_now.strftime('%H:%M:%S')
+            dstr = time_now.strftime('%d/%m%/%Y')
+            f.writelines(f'{name},{tstr},{dstr}')   
 
 cap = cv2.VideoCapture(1)
 
@@ -52,7 +68,8 @@ while True:
             cv2.rectangle(frame, (x1,y1),(x2,y2),(0,255,0),2)
             cv2.rectangle(frame, (x1,y2-35),(x2,y2),(0,255,0), cv2.filled)
             cv2.putText(frame, name,(x1 + 6, y2 - 6),cv2.FONT_HERSHEY_COMPLEX, 1,(0,0,255), 2)
-    
+            attendance(name)
+
     cv2.imshow("Camera", frame)
     if cv2.waitKey(10) == 13:
         break
